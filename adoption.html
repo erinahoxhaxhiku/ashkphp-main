@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adoption - Animal Shelter Kosovo</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="index.php">
+                    <div class="logo-icon green">🐾</div>
+                    <span>Animal Shelter Kosovo</span>
+                </a>
+            </div>
+            <div class="nav-links" id="navLinks">
+                <a href="index.php#about">About</a>
+                <a href="index.php#animals">Animals</a>
+                <a href="volunteering.html">Volunteer</a>
+                <a href="index.php" class="btn btn-outline">Back to Home</a>
+            </div>
+            <div class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <section class="hero adoption-hero">
+        <div class="hero-bg">
+            <img
+                src="https://images.unsplash.com/photo-1647877911821-2af4403f3d64?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content">
+            <div class="badge green">🏠 Find Your Perfect Match</div>
+            <h1 class="hero-title">
+                <span class="gradient-text green">Give a Home</span><br>
+                to a Friend in Need
+            </h1>
+            <p class="hero-description">
+                Find your perfect companion today. <br>Every adoption saves a life.
+            </p>
+            <div class="hero-buttons">
+                <a href="#process" class="btn btn-green btn-lg">
+                    Start Adoption Process <span class="arrow">→</span>
+                </a>
+                <a href="index.php#animals" class="btn btn-outline btn-lg">Browse Animals</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="statistics">
+        <div class="container">
+            <div class="section-header">
+                <div class="badge blue">📊 Our Impact</div>
+                <h2>Making a <span class="text-blue">Difference</span> Together</h2>
+                <p>See how our community is changing lives, one adoption at a time.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon green">❤️</div>
+                    <div class="stat-number" data-target="2400">0</div>
+                    <div class="stat-label">Animals Adopted Yearly</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">👥</div>
+                    <div class="stat-number" data-target="200">0</div>
+                    <div class="stat-label">Monthly Volunteers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">🏆</div>
+                    <div class="stat-number" data-target="70">0</div>
+                    <div class="stat-label">Weekly Helpers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">🛡️</div>
+                    <div class="stat-number" data-target="95">0</div>
+                    <div class="stat-label">Success Rate %</div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="chart-section">
+                <h3>Volunteer Statistics</h3>
+                <div class="chart-container">
+                    <canvas id="volunteerChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Adopt Section -->
+    <section class="why-adopt">
+        <div class="container">
+            <div class="section-header">
+                <div class="badge green">💚 Why Choose Us</div>
+                <h2>Why Adopt <span class="text-green">From Us?</span></h2>
+                <p>We ensure every adoption is a perfect match for both you and your new companion.</p>
+            </div>
+
+            <div class="reasons-grid">
+                <div class="reason-card loading">
+                    <div class="reason-icon red">❤️</div>
+                    <h3>Save a Life</h3>
+                    <p>Each adoption gives a homeless animal a second chance at life and opens up space for another
+                        animal in need.</p>
+                </div>
+                <div class="reason-card loading">
+                    <div class="reason-icon green">🛡️</div>
+                    <h3>Fully Vetted Pets</h3>
+                    <p>All our animals are vaccinated, neutered, and health checked by qualified veterinarians before
+                        adoption.</p>
+                </div>
+                <div class="reason-card loading">
+                    <div class="reason-icon blue">👥</div>
+                    <h3>Support Local</h3>
+                    <p>By adopting locally, you're helping shelters in Kosovo thrive and continue their important work
+                        in the community.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Adoption Process -->
+    <section id="process" class="adoption-process">
+        <div class="container">
+            <div class="section-header">
+                <div class="badge blue">📋 Simple Process</div>
+                <h2>How to <span class="text-blue">Adopt</span></h2>
+                <p>Our adoption process is designed to ensure the best match for both you and your new pet.</p>
+            </div>
+
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <h3>Browse Animals</h3>
+                    <p>Look through our available animals and find one that catches your heart.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <h3>Submit Application</h3>
+                    <p>Fill out our adoption application with your information and preferences.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <h3>Meet & Greet</h3>
+                    <p>Visit the shelter to meet your potential new companion in person.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <h3>Take Home</h3>
+                    <p>Complete the adoption process and welcome your new family member home!</p>
+                </div>
+            </div>
+
+            <div class="cta-center">
+                <a href="index.php#animals" class="btn btn-blue btn-lg">
+                    Start Your Adoption Journey <span class="arrow">→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Stories -->
+    <section class="success-stories">
+        <div class="container">
+            <div class="section-header">
+                <div class="badge green">❤️ Happy Endings</div>
+                <h2>Success <span class="text-green">Stories</span></h2>
+                <p>See how adoption has changed lives for both pets and their new families.</p>
+            </div>
+
+            <div class="stories-grid">
+                <div class="story-card loading">
+                    <div class="story-image">
+                        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80"
+                            alt="Bella and family">
+                        <div class="story-status">✅ Adopted</div>
+                    </div>
+                    <h3>Bella & The Johnson Family</h3>
+                    <p>Bella found her forever home with the Johnsons after 6 months at the shelter. Now she's the queen
+                        of the house!</p>
+                </div>
+                <div class="story-card loading">
+                    <div class="story-image">
+                        <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=400&q=80"
+                            alt="Max and Sarah">
+                        <div class="story-status">✅ Adopted</div>
+                    </div>
+                    <h3>Max & Sarah</h3>
+                    <p>Max was a shy rescue dog who blossomed with Sarah's patience and love. They're now inseparable
+                        hiking buddies!</p>
+                </div>
+                <div class="story-card loading">
+                    <div class="story-image">
+                        <img src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=400&q=80"
+                            alt="Luna and family">
+                        <div class="story-status">✅ Adopted</div>
+                    </div>
+                    <h3>Luna & The Petrovics</h3>
+                    <p>Luna the cat went from street life to luxury with the Petrovic family. She now rules her own cat
+                        tower kingdom!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="final-cta">
+        <div class="container">
+            <div class="cta-content">
+                <div class="badge purple">🎉 Ready to Adopt?</div>
+                <h2>Your Perfect <span class="text-purple">Companion</span> is Waiting</h2>
+                <p>Don't wait any longer. There's an animal at our shelter right now who would love nothing more than to
+                    be part of your family.</p>
+                <div class="cta-buttons">
+                    <a href="index.php#animals" class="btn btn-purple btn-lg">
+                        See Available Animals <span class="arrow">→</span>
+                    </a>
+                    <a href="index.php#contact" class="btn btn-outline btn-lg">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="simple-footer">
+        <div class="container">
+            <p>&copy; 2025 Animal Shelter Kosovo. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script/javascript.js"></script>
+    <script>
+        // Chart.js implementation
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('volunteerChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Weekly', 'Monthly', 'Yearly'],
+                        datasets: [{
+                            label: 'Number of Volunteers',
+                            data: [70, 200, 2400],
+                            backgroundColor: [
+                                'rgba(34, 197, 94, 0.7)',
+                                'rgba(34, 197, 94, 0.8)',
+                                'rgba(34, 197, 94, 1)'
+                            ],
+                            borderColor: [
+                                'rgba(21, 128, 61, 1)',
+                                'rgba(21, 128, 61, 1)',
+                                'rgba(21, 128, 61, 1)'
+                            ],
+                            borderWidth: 1,
+                            borderRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            }
+                        },
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeOutBounce'
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 500
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
