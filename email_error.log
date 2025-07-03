@@ -1,0 +1,40 @@
+[01-Jul-2025 15:18:00 Europe/Berlin] PHP Deprecated:  Creation of dynamic property PHPMailer\PHPMailer\PHPMailer::$exceptions is deprecated in C:\xampp\htdocs\ashkphp-main\PHPMailer\src\PHPMailer.php on line 50
+[01-Jul-2025 15:18:00 Europe/Berlin] PHP Deprecated:  Creation of dynamic property PHPMailer\PHPMailer\PHPMailer::$SMTPDebug is deprecated in C:\xampp\htdocs\ashkphp-main\test_email.php on line 18
+[01-Jul-2025 15:18:00 Europe/Berlin] PHP Deprecated:  Creation of dynamic property PHPMailer\PHPMailer\PHPMailer::$Debugoutput is deprecated in C:\xampp\htdocs\ashkphp-main\test_email.php on line 19
+[01-Jul-2025 15:18:00 Europe/Berlin] PHP Fatal error:  Uncaught Error: Cannot access protected property PHPMailer\PHPMailer\PHPMailer::$Host in C:\xampp\htdocs\ashkphp-main\test_email.php:26
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ashkphp-main\test_email.php on line 26
+[01-Jul-2025 15:18:55 Europe/Berlin] PHP Deprecated:  Creation of dynamic property PHPMailer\PHPMailer\PHPMailer::$exceptions is deprecated in C:\xampp\htdocs\ashkphp-main\PHPMailer\src\PHPMailer.php on line 50
+[01-Jul-2025 15:18:55 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PHPMailer\PHPMailer\PHPMailer::setDebugOutput() in C:\xampp\htdocs\ashkphp-main\test_email.php:19
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ashkphp-main\test_email.php on line 19
+[01-Jul-2025 15:19:35 Europe/Berlin] PHP Deprecated:  Creation of dynamic property PHPMailer\PHPMailer\PHPMailer::$exceptions is deprecated in C:\xampp\htdocs\ashkphp-main\PHPMailer\src\PHPMailer.php on line 50
+[01-Jul-2025 15:19:35 Europe/Berlin] PHP Deprecated:  Creation of dynamic property PHPMailer\PHPMailer\PHPMailer::$SMTPDebug is deprecated in C:\xampp\htdocs\ashkphp-main\test_email.php on line 19
+[01-Jul-2025 15:19:35 Europe/Berlin] PHP Fatal error:  Uncaught Error: Cannot access protected property PHPMailer\PHPMailer\PHPMailer::$Host in C:\xampp\htdocs\ashkphp-main\test_email.php:23
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ashkphp-main\test_email.php on line 23
+[01-Jul-2025 15:20:16 Europe/Berlin] PHP Deprecated:  Creation of dynamic property PHPMailer\PHPMailer\PHPMailer::$exceptions is deprecated in C:\xampp\htdocs\ashkphp-main\PHPMailer\src\PHPMailer.php on line 50
+[01-Jul-2025 15:20:16 Europe/Berlin] PHP Deprecated:  Creation of dynamic property PHPMailer\PHPMailer\PHPMailer::$SMTPDebug is deprecated in C:\xampp\htdocs\ashkphp-main\test_email.php on line 21
+[01-Jul-2025 15:20:16 Europe/Berlin] PHP Deprecated:  Creation of dynamic property PHPMailer\PHPMailer\PHPMailer::$Hostname is deprecated in C:\xampp\htdocs\ashkphp-main\test_email.php on line 22
+[01-Jul-2025 15:20:16 Europe/Berlin] PHP Fatal error:  Uncaught Error: Cannot access protected property PHPMailer\PHPMailer\PHPMailer::$SMTPAuth in C:\xampp\htdocs\ashkphp-main\test_email.php:23
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ashkphp-main\test_email.php on line 23
+[01-Jul-2025 15:25:01 Europe/Berlin] PHP Warning:  require(PHPMailer/src/Exception.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\ashkphp-main\test_email.php on line 6
+[01-Jul-2025 15:25:01 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'PHPMailer/src/Exception.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\ashkphp-main\test_email.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ashkphp-main\test_email.php on line 6
+[01-Jul-2025 15:28:29 Europe/Berlin] PHP Warning:  require(PHPMailer/src/Exception.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\ashkphp-main\test_email.php on line 6
+[01-Jul-2025 15:28:29 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'PHPMailer/src/Exception.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\ashkphp-main\test_email.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ashkphp-main\test_email.php on line 6
+[01-Jul-2025 15:29:00 Europe/Berlin] PHP Warning:  require(C:\xampp\htdocs\ashkphp-main/PHPMailer/src/Exception.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\ashkphp-main\test_email.php on line 6
+[01-Jul-2025 15:29:00 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'C:\xampp\htdocs\ashkphp-main/PHPMailer/src/Exception.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\ashkphp-main\test_email.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ashkphp-main\test_email.php on line 6

@@ -1,13 +1,21 @@
 <?php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'animal_shelter');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 try {
-    $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
+    $host = 'localhost';
+    $dbname = 'animalshelter';
+    $username = 'root';
+    $password = '';
+    
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    
+    error_log("Connected to database: $dbname");
+    
 } catch(PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    error_log("Database error: " . $e->getMessage());
+    die("Database error: " . $e->getMessage());
 } 

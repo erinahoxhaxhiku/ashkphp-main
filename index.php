@@ -8,6 +8,9 @@ require_once 'classes/Animal.php';
 
 session_start();
 
+// Define base URL for assets
+$baseUrl = '/ashkphp-main';
+
 define("ORG_NAME", "Animal Shelter Kosovo");
 define("IMAGE_DIR", "https://images.unsplash.com/");
 
@@ -21,32 +24,58 @@ $animal = new Animal($pdo);
 
 // Get available animals from database
 $availableAnimals = array_filter($animal->getAll(), function ($a) {
-    return strtolower($a['status']) === 'available';
+    return strtolower($a['status']) === 'available' || strtolower($a['status']) === 'pending';
 });
 
 $team = [
     ["name" => "Vera", "age" => 30, "desc" => "I've been working here for <br>6 months and I love it!", "img" => "https://images.unsplash.com/photo-1598897468838-e750a545847d?q=80&w=3870&auto=format&fit=crop", "btn" => "Contact her"],
     ["name" => "Eris", "age" => 19, "desc" => "I'm new here but working with animals <br> really reduces my stress!", "img" => "https://images.unsplash.com/photo-1519456264917-42d0aa2e0625?q=80&w=3870&auto=format&fit=crop", "btn" => "Contact him"],
-    ["name" => "Erina", "age" => 18, "desc" => "Co-founder. Helping animals find homes is a blessing.", "img" => "./images/erina.jpg", "btn" => "Contact me"]
+    ["name" => "Erina", "age" => 18, "desc" => "Co-founder. Helping animals <br>find homes is a blessing.", "img" => "./images/erina.jpeg", "btn" => "Contact me"]
 ];
 
 function renderAnimal($a)
 {
+    global $baseUrl;
     $dataName = strtolower($a['name']);
     $dataDesc = strtolower($a['description']);
-    $imagePath = !empty($a['image_path']) ? 'admin/' . $a['image_path'] : 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80';
+    
+    // Process image path
+    $imagePath = !empty($a['image_path']) ? $a['image_path'] : 'public/placeholder.jpg';
+    // Make sure the path starts with baseUrl only if it's not already a relative path
+    $fullImagePath = strpos($imagePath, '/') === 0 ? $imagePath : $baseUrl . '/' . $imagePath;
+    
+    // Debug output
+    error_log("Rendering animal: " . $a['name'] . " with image path: " . $fullImagePath);
+    
+    // Determine button state based on status
+    $buttonText = 'Adopt';
+    $buttonClass = 'btn btn-primary adopt-btn';
+    $buttonDisabled = '';
+    
+    if ($a['status'] === 'adopted') {
+        $buttonText = 'Adopted';
+        $buttonClass .= ' btn-disabled';
+        $buttonDisabled = 'disabled';
+    } elseif ($a['status'] === 'pending') {
+        $buttonText = 'Pending';
+        $buttonClass .= ' btn-disabled';
+        $buttonDisabled = 'disabled';
+    }
 
     return "
     <div class='animal-card loading' data-name='$dataName' data-description='$dataDesc'>
         <div class='animal-image'>
-            <img src='" . htmlspecialchars($imagePath) . "' alt='" . htmlspecialchars($a['name']) . "'>
-            <div class='animal-status'>" . htmlspecialchars($a['status']) . "</div>
+            <img src='" . htmlspecialchars($fullImagePath) . "' 
+                 alt='" . htmlspecialchars($a['name']) . "' 
+                 onerror=\"this.src='" . $baseUrl . "/public/placeholder.jpg'; console.log('Using placeholder for: ' + this.alt);\"
+                 onload=\"console.log('Successfully loaded image for: ' + this.alt);\">
+            <div class='animal-status " . htmlspecialchars(strtolower($a['status'])) . "'>" . htmlspecialchars($a['status']) . "</div>
         </div>
         <div class='animal-info'>
             <h3>" . htmlspecialchars($a['name']) . "</h3>
             <p>" . htmlspecialchars($a['description']) . "</p>
             <p class='species-tag'>" . htmlspecialchars($a['species']) . "</p>
-            <button class='btn btn-primary adopt-btn' data-animal-id='" . intval($a['id']) . "'>Adopt</button>
+            <button class='$buttonClass' data-animal-id='" . intval($a['id']) . "' $buttonDisabled>$buttonText</button>
         </div>
     </div>";
 }
@@ -61,7 +90,7 @@ function renderTeamMember($m)
         </div>
         <h3>{$m['name']}</h3>
         <p>{$m['desc']}</p>
-        <button class='btn btn-purple adopt-btn'>{$m['btn']}</button>
+        <button class='btn btn-gray-3'>{$m['btn']}</button>
     </div>";
 }
 
@@ -286,18 +315,106 @@ function truncateText($text, $limit = 100)
 
                 <div id="formMessage" class="form-message"></div>
 
+                <script>
+                document.getElementById('contactForm').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(this);
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    const formMessage = document.getElementById('formMessage');
+                    
+                    // Disable form and show loading state
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'Sending...';
+                    formMessage.style.display = 'none';
+                    
+                    try {
+                        const response = await fetch('process_contact.php', {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'Accept': 'application/json',
+                                'Cache-Control': 'no-cache',
+                                'Pragma': 'no-cache'
+                            },
+                            cache: 'no-store'
+                        });
+                        
+                        // Log response details for debugging
+                        console.log('Response status:', response.status);
+                        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+                        
+                        const contentType = response.headers.get('content-type');
+                        if (!contentType || !contentType.includes('application/json')) {
+                            // Get the response text for debugging
+                            const responseText = await response.text();
+                            console.error('Invalid response:', responseText);
+                            throw new Error(`Invalid response type: ${contentType}. Response: ${responseText.substring(0, 200)}...`);
+                        }
+                        
+                        // Parse the response as JSON
+                        const data = await response.json().catch(e => {
+                            throw new Error(`JSON parse error: ${e.message}`);
+                        });
+                        console.log('Response data:', data);
+                        
+                        // Handle the response
+                        formMessage.textContent = data.message || 'An unknown error occurred';
+                        formMessage.className = `form-message ${data.success ? 'success' : 'error'}`;
+                        formMessage.style.display = 'block';
+                        
+                        if (data.success) {
+                            this.reset();
+                        }
+                    } catch (error) {
+                        console.error('Request error:', error);
+                        formMessage.textContent = error.message || 'An error occurred. Please try again later.';
+                        formMessage.className = 'form-message error';
+                        formMessage.style.display = 'block';
+                    } finally {
+                        // Re-enable form
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Send Message';
+                        
+                        // Auto-hide message after 5 seconds
+                        setTimeout(() => {
+                            if (formMessage.style.display === 'block') {
+                                formMessage.style.display = 'none';
+                            }
+                        }, 5000);
+                    }
+                });
+                </script>
+
                 <div class="social-links">
-                    <a href="#" class="social-link">
-                        <div class="social-icon">📧</div>
+                    <a href="https://instagram.com/erinahoxhaxhiiku" target="_blank" class="social-link">
+                        <div class="social-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                            </svg>
+                        </div>
                     </a>
-                    <a href="#" class="social-link">
-                        <div class="social-icon">📷</div>
+                    <a href="https://facebook.com/erinahoxhaxhiku" target="_blank" class="social-link">
+                        <div class="social-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                            </svg>
+                        </div>
                     </a>
-                    <a href="#" class="social-link">
-                        <div class="social-icon">📘</div>
+                    <a href="https://www.linkedin.com/in/erina-hoxhaxhiku-448160339/" target="_blank" class="social-link">
+                        <div class="social-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                                <rect x="2" y="9" width="4" height="12"></rect>
+                                <circle cx="4" cy="4" r="2"></circle>
+                            </svg>
+                        </div>
                     </a>
                 </div>
             </div>
+            <br>
             <div class="footer-bottom">
                 <p>&copy; 2025 Animal Rescue Kosovo. All rights reserved.</p>
             </div>

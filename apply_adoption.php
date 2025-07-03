@@ -2,6 +2,7 @@
 session_start();
 require_once 'config/database.php';
 require_once 'classes/User.php';
+require_once 'classes/Animal.php';
 
 header('Content-Type: application/json');
 
@@ -18,22 +19,45 @@ if ($animal_id <= 0) {
     exit;
 }
 
-// Check if user has already applied for this animal and status is pending or approved
-$stmt = $pdo->prepare("SELECT * FROM adoption_applications WHERE user_id = ? AND animal_id = ? AND status IN ('pending', 'approved')");
-$stmt->execute([$user_id, $animal_id]);
-$existingApplication = $stmt->fetch();
+try {
+    // Start transaction
+    $pdo->beginTransaction();
 
-if ($existingApplication) {
-    echo json_encode(['success' => false, 'message' => 'You have already applied to adopt this animal.']);
-    exit;
-}
+    // Check if user has already applied for this animal and status is pending or approved
+    $stmt = $pdo->prepare("SELECT * FROM adoption_applications WHERE user_id = ? AND animal_id = ? AND status IN ('pending', 'approved')");
+    $stmt->execute([$user_id, $animal_id]);
+    $existingApplication = $stmt->fetch();
 
-// Insert new adoption application
-$insert = $pdo->prepare("INSERT INTO adoption_applications (user_id, animal_id) VALUES (?, ?)");
-$success = $insert->execute([$user_id, $animal_id]);
+    if ($existingApplication) {
+        $pdo->rollBack();
+        echo json_encode(['success' => false, 'message' => 'You have already applied to adopt this animal.']);
+        exit;
+    }
 
-if ($success) {
-    echo json_encode(['success' => true, 'message' => 'Your adoption application has been submitted.']);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Failed to submit application. Please try again.']);
+    // Insert new adoption application
+    $insert = $pdo->prepare("INSERT INTO adoption_applications (user_id, animal_id) VALUES (?, ?)");
+    $success = $insert->execute([$user_id, $animal_id]);
+
+    if ($success) {
+        // Update animal status to pending
+        $animal = new Animal($pdo);
+        $statusUpdated = $animal->updateStatus($animal_id, 'pending');
+
+        if ($statusUpdated) {
+            $pdo->commit();
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Your adoption application has been submitted. The animal\'s status has been updated to pending.'
+            ]);
+        } else {
+            $pdo->rollBack();
+            echo json_encode(['success' => false, 'message' => 'Failed to update animal status. Please try again.']);
+        }
+    } else {
+        $pdo->rollBack();
+        echo json_encode(['success' => false, 'message' => 'Failed to submit application. Please try again.']);
+    }
+} catch (Exception $e) {
+    $pdo->rollBack();
+    echo json_encode(['success' => false, 'message' => 'An error occurred. Please try again.']);
 }

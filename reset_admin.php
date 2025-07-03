@@ -2,25 +2,32 @@
 require_once 'config/database.php';
 
 try {
-    // Create a new password hash for 'admin123'
+    // Create a new password hash
     $password = 'admin123';
-    $hash = password_hash($password, PASSWORD_DEFAULT);
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     
     // Delete existing admin user if exists
     $stmt = $pdo->prepare("DELETE FROM users WHERE username = 'admin'");
     $stmt->execute();
     
-    // Insert new admin user
-    $stmt = $pdo->prepare("INSERT INTO users (username, password, email, role) VALUES (?, ?, ?, ?)");
-    $result = $stmt->execute(['admin', $hash, 'admin@animalshelter.com', 'admin']);
+    // Create new admin user
+    $sql = "INSERT INTO users (username, email, password, role) VALUES (:username, :email, :password, :role)";
+    $stmt = $pdo->prepare($sql);
+    $result = $stmt->execute([
+        ':username' => 'admin',
+        ':email' => 'admin@animalshelter.com',
+        ':password' => $hashedPassword,
+        ':role' => 'admin'
+    ]);
     
     if ($result) {
-        echo "Admin user created successfully!\n";
+        echo "Admin user reset successfully!\n";
         echo "Username: admin\n";
         echo "Password: admin123\n";
     } else {
-        echo "Failed to create admin user.\n";
+        echo "Failed to reset admin user.\n";
     }
+    
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage() . "\n";
 }

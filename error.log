@@ -1,0 +1,12 @@
+[01-Jul-2025 15:31:08 Europe/Berlin] Received POST request with data: Array
+(
+    [name] => erina
+    [email] => erinahoxhaxhiku213@gmail.com
+    [message] => Hi , just wanted to say that this is an amazing website!
+)
+
+[01-Jul-2025 15:31:08 Europe/Berlin] PHP Deprecated:  Constant FILTER_SANITIZE_STRING is deprecated in C:\xampp\htdocs\ashkphp-main\process_contact.php on line 21
+[01-Jul-2025 15:31:08 Europe/Berlin] PHP Deprecated:  Constant FILTER_SANITIZE_STRING is deprecated in C:\xampp\htdocs\ashkphp-main\process_contact.php on line 23
+[01-Jul-2025 15:31:08 Europe/Berlin] Filtered data - Name: erina, Email: erinahoxhaxhiku213@gmail.com, Message: Hi , just wanted to say that this is an amazing website!
+[01-Jul-2025 15:31:08 Europe/Berlin] Attempting to send email...
+[01-Jul-2025 15:31:10 Europe/Berlin] Email sent successfully!

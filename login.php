@@ -6,8 +6,17 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Debug: Check if session is working
+// Debug: Check PHP version and loaded extensions
+error_log("PHP Version: " . PHP_VERSION);
+error_log("Loaded extensions: " . implode(", ", get_loaded_extensions()));
+
+// Debug: Check session configuration
+error_log("Session save path: " . session_save_path());
+error_log("Session name: " . session_name());
 error_log("Session ID: " . session_id());
+error_log("Session status: " . session_status());
+
+// Debug: Check if session is working
 error_log("Session data: " . print_r($_SESSION, true));
 
 // If user is already logged in, redirect to home
@@ -43,6 +52,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $stmt = $pdo->query("SELECT 1");
                 error_log("Database connection test successful");
+                
+                // Debug: Check if user exists
+                $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+                $stmt->execute([$username]);
+                $dbUser = $stmt->fetch();
+                if ($dbUser) {
+                    error_log("User found in database. Role: " . $dbUser['role']);
+                    error_log("Stored password hash: " . $dbUser['password']);
+                    
+                    // Test password verification directly
+                    $passwordValid = password_verify($password, $dbUser['password']);
+                    error_log("Direct password verification result: " . ($passwordValid ? "VALID" : "INVALID"));
+                } else {
+                    error_log("User not found in database");
+                }
             } catch (PDOException $e) {
                 error_log("Database connection test failed: " . $e->getMessage());
             }
@@ -58,9 +82,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } catch (Exception $e) {
         error_log("Login error: " . $e->getMessage());
+        error_log("Stack trace: " . $e->getTraceAsString());
         $error = 'An error occurred. Please try again later.';
     }
 }
+
+// Debug: Show all errors
+error_log("PHP errors: " . print_r(error_get_last(), true));
 ?>
 
 <!DOCTYPE html>
@@ -107,6 +135,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-decoration: none;
             cursor: pointer;
             border: none;
+            width: 100%;
+            text-align: center;
         }
         
         .btn-primary {
@@ -121,6 +151,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        .auth-links {
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        .auth-links a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        
+        .auth-links a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -139,12 +194,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-group">
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" required 
-                           value="<?php echo htmlspecialchars($username); ?>">
+                           value="<?php echo htmlspecialchars($username); ?>"
+                           autocomplete="username">
                 </div>
                 
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" required
+                           autocomplete="current-password">
                 </div>
                 
                 <button type="submit" class="btn btn-primary">Login</button>
@@ -160,14 +217,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
     
-    <!-- Debug information for development -->
-    <?php if (isset($_ENV['DEBUG']) && $_ENV['DEBUG']): ?>
-        <div style="margin-top: 2rem; padding: 1rem; background: #f3f4f6;">
+    <!-- Debug information -->
+    <?php if (true): // Always show debug info for now ?>
+        <div style="margin: 2rem auto; max-width: 800px; padding: 1rem; background: #f3f4f6; border-radius: 8px;">
             <h3>Debug Information:</h3>
             <pre><?php
+                echo "PHP Version: " . PHP_VERSION . "\n";
+                echo "Session save path: " . session_save_path() . "\n";
                 echo "Session ID: " . session_id() . "\n";
                 echo "POST data: " . print_r($_POST, true) . "\n";
-                echo "Session data: " . print_r($_SESSION, true);
+                echo "Session data: " . print_r($_SESSION, true) . "\n";
+                
+                // Test database connection
+                try {
+                    $testStmt = $pdo->query("SELECT COUNT(*) FROM users");
+                    $userCount = $testStmt->fetchColumn();
+                    echo "Number of users in database: " . $userCount . "\n";
+                } catch (Exception $e) {
+                    echo "Database error: " . $e->getMessage() . "\n";
+                }
             ?></pre>
         </div>
     <?php endif; ?>

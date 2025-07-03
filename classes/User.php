@@ -9,92 +9,80 @@ class User {
     // Register new user
     public function register($username, $password, $email) {
         try {
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            // Check if username already exists
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
+            $stmt->execute([$username]);
+            if ($stmt->fetchColumn() > 0) {
+                return false;
+            }
             
-            $sql = "INSERT INTO users (username, password, email) VALUES (:username, :password, :email)";
-            $stmt = $this->pdo->prepare($sql);
-            return $stmt->execute([
-                ':username' => $username,
-                ':password' => $hashedPassword,
-                ':email' => $email
-            ]);
-        } catch (PDOException $e) {
-            error_log("Database error during registration: " . $e->getMessage());
-            return false;
+            // Hash password
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            
+            // Insert new user
+            $stmt = $this->pdo->prepare("INSERT INTO users (username, password, email, role) VALUES (?, ?, ?, 'user')");
+            return $stmt->execute([$username, $hash, $email]);
+            
+        } catch (Exception $e) {
+            error_log("Registration error: " . $e->getMessage());
+            throw $e;
         }
     }
     
     // Login user
     public function login($username, $password) {
         try {
-            // Debug: Log login attempt
-            error_log("Starting login process for username: " . $username);
+            error_log("Login attempt for username: " . $username);
             
-            // Check if username exists
-            $sql = "SELECT * FROM users WHERE username = :username";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([':username' => $username]);
+            $stmt = $this->pdo->prepare("SELECT * FROM users WHERE username = ?");
+            $stmt->execute([$username]);
             $user = $stmt->fetch();
             
-            // Debug: Log user lookup result
+            error_log("Database query executed. User found: " . ($user ? "Yes" : "No"));
+            
             if ($user) {
-                error_log("User found in database: " . $username);
-                error_log("User role: " . $user['role']);
-                error_log("Stored password hash length: " . strlen($user['password']));
-            } else {
-                error_log("User not found in database: " . $username);
-                return false;
+                error_log("User details: " . print_r([
+                    'id' => $user['id'],
+                    'username' => $user['username'],
+                    'role' => $user['role'],
+                    'password_length' => strlen($user['password'])
+                ], true));
+                
+                if (password_verify($password, $user['password'])) {
+                    error_log("Password verification successful");
+                    
+                    // Start session if not already started
+                    if (session_status() === PHP_SESSION_NONE) {
+                        session_start();
+                    }
+                    
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $user['username'];
+                    $_SESSION['role'] = $user['role'];
+                    
+                    error_log("Session data set: " . print_r($_SESSION, true));
+                    return true;
+                } else {
+                    error_log("Password verification failed");
+                    error_log("Input password length: " . strlen($password));
+                    error_log("Stored hash length: " . strlen($user['password']));
+                    return false;
+                }
             }
             
-            // Verify password
-            $passwordValid = password_verify($password, $user['password']);
-            error_log("Password verification result: " . ($passwordValid ? "SUCCESS" : "FAILED"));
-            
-            if ($passwordValid) {
-                // Set session variables
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['role'] = $user['role'];
-                
-                // Debug: Log successful login
-                error_log("Login successful for user: " . $username);
-                error_log("Session data after login: " . print_r($_SESSION, true));
-                
-                return true;
-            } else {
-                error_log("Password verification failed for user: " . $username);
-                return false;
-            }
-        } catch (PDOException $e) {
-            error_log("Database error during login: " . $e->getMessage());
-            error_log("SQL State: " . $e->errorInfo[0]);
-            error_log("Error Code: " . $e->errorInfo[1]);
-            error_log("Error Message: " . $e->errorInfo[2]);
+            error_log("Login failed - user not found");
             return false;
+            
+        } catch (Exception $e) {
+            error_log("Login error in User class: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            throw $e;
         }
     }
     
     // Check if user is admin
     public function isAdmin() {
-        if (!isset($_SESSION['user_id'])) {
-            error_log("No user_id in session");
-            return false;
-        }
-        
-        try {
-            $sql = "SELECT role FROM users WHERE id = :id";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([':id' => $_SESSION['user_id']]);
-            $user = $stmt->fetch();
-            
-            $isAdmin = $user && $user['role'] === 'admin';
-            error_log("isAdmin check for user ID " . $_SESSION['user_id'] . ": " . ($isAdmin ? 'true' : 'false'));
-            
-            return $isAdmin;
-        } catch (PDOException $e) {
-            error_log("Database error checking admin status: " . $e->getMessage());
-            return false;
-        }
+        return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     }
     
     // Logout user

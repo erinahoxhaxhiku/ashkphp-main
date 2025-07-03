@@ -5,6 +5,9 @@ require_once 'classes/Animal.php';
 // Initialize Animal class
 $animal = new Animal($pdo);
 
+// Define base URL for assets (same as index.php)
+$baseUrl = '/ashkphp-main';
+
 // Get adopted animals from database (we only need adopted animals here)
 $adoptedAnimals = array_filter($animal->getAll(), function($a) {
     return strtolower($a['status']) === 'adopted';
@@ -12,14 +15,20 @@ $adoptedAnimals = array_filter($animal->getAll(), function($a) {
 
 // Function to render adopted animal card
 function renderAdoptedAnimal($a) {
+    global $baseUrl;
     $dataName = strtolower($a['name']);
     $dataDesc = strtolower($a['description']);
-    $imagePath = !empty($a['image_path']) ? 'admin/' . $a['image_path'] : 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80';
+    $imagePath = !empty($a['image_path']) ? $a['image_path'] : 'public/placeholder.jpg';
+    // Make sure the path starts with baseUrl only if it's not already a relative path
+    $fullImagePath = strpos($imagePath, '/') === 0 ? $imagePath : $baseUrl . '/' . $imagePath;
 
     return "
     <div class='story-card loading'>
         <div class='story-image'>
-            <img src='" . htmlspecialchars($imagePath) . "' alt='" . htmlspecialchars($a['name']) . "'>
+            <img src='" . htmlspecialchars($fullImagePath) . "' 
+                 alt='" . htmlspecialchars($a['name']) . "'
+                 onerror=\"this.src='" . $baseUrl . "/public/placeholder.jpg'; console.log('Using placeholder for: ' + this.alt);\"
+                 onload=\"console.log('Successfully loaded image for: ' + this.alt);\">
             <div class='story-status'>✅ Adopted</div>
         </div>
         <h3>" . htmlspecialchars($a['name']) . "</h3>
@@ -79,7 +88,7 @@ function renderAdoptedAnimal($a) {
                 <span class="gradient-text">Meet Our Adopted Friends</span>
             </h1>
             <p class="hero-description">
-                See the wonderful stories of animals who found their forever homes.<br>Your future companion could be next!
+                See the wonderful stories of <br>animals who found their forever homes.
             </p>
             <div class="hero-buttons">
                 <a href="index.php#animals" class="btn btn-green btn-lg">
@@ -105,11 +114,15 @@ function renderAdoptedAnimal($a) {
 
             <div class="animals-grid" id="animalsGrid">
                 <?php foreach ($adoptedAnimals as $adoptedAnimal): 
-                    $imagePath = !empty($adoptedAnimal['image_path']) ? 'admin/' . $adoptedAnimal['image_path'] : 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80';
+                    $imagePath = !empty($adoptedAnimal['image_path']) ? $adoptedAnimal['image_path'] : 'public/placeholder.jpg';
+                    $fullImagePath = strpos($imagePath, '/') === 0 ? $imagePath : $baseUrl . '/' . $imagePath;
                 ?>
                     <div class="animal-card loading" data-name="<?php echo strtolower($adoptedAnimal['name']); ?>" data-description="<?php echo strtolower($adoptedAnimal['description']); ?>">
                         <div class="animal-image">
-                            <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="<?php echo htmlspecialchars($adoptedAnimal['name']); ?>">
+                            <img src="<?php echo htmlspecialchars($fullImagePath); ?>" 
+                                 alt="<?php echo htmlspecialchars($adoptedAnimal['name']); ?>"
+                                 onerror="this.src='<?php echo $baseUrl; ?>/public/placeholder.jpg'; console.log('Using placeholder for: ' + this.alt);"
+                                 onload="console.log('Successfully loaded image for: ' + this.alt);">
                             <div class="animal-status">Adopted</div>
                         </div>
                         <div class="animal-info">
